@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+        <record model="ir.ui.view" id="permission_form_view">
+            <field name="name">permission.form</field>
+            <field name="model">offsite.permission</field>
+            <field name="arch" type="xml">
+
+                <header>
+                    <button name="action_draft"
+                            type="object"
+                            string="แก้ไขการขออนุมัติ"
+                            class="oe_highlight"
+                            states="refused"/>
+                    <button name="action_reported"
+                            type="object"
+                            string="ส่งบันทึก"
+                            class="oe_highlight"
+                            states="draft"/>
+                    <button name="action_approved"
+                            type="object"
+                            class="oe_highlight"
+                            string="อนุมัติ"
+                            states="reported"/>
+                    <button name="action_refused"
+                            type="object"
+                            class="oe_highlight"
+                            string="ไม่อนุมัติ"
+                            states="reported"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+     
+                <form string="แบบฟอร์มขออนุญาตไปราชการ">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                <field name="responsible_id"/>
+                                <field name="position" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                <field name="fuculty" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                <field name="department" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" widget="ztree_select"/>
+                            </group>
+                            <group>
+                                <field name="date_rec" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                <field name="number" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                <field name="departure_as" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" widget="radio" options="{'horizontal': true}"/>
+                                <field name="attachment_ids" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" string="แนบไฟล์" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="วันเวลา">
+                                <group>
+                                    <field name="date_departure" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" style="width:16%"/>
+                                    <field name="date_arrival" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" style="width:16%"/>
+                                    <field name="days" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" style="width:16%"/>
+                                    <field name="hours" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" style="width:16%"/>
+                                </group>                          
+                            </page>
+                            <page string="สถานที่">
+                                <group>
+                                    <field name="place" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                    <field name="amphur" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                    <field name="province" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                </group>
+                            </page>
+                            <page string="งบประมาณและการเดินทาง">
+                                <group>
+                                    <field name="budget1" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" style="width:16%" />
+                                    <field name="budget2" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" widget="radio" />
+                                    <field name="budget_type" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" widget="radio" />
+                                </group>                              
+                            </page>
+                            <page string="การเดินทาง">
+                                <group>
+                                    <field name="vehicle" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" widget="radio" />
+                                    <field name="license_plate" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                </group>                              
+                            </page>
+                            <page string="การมอบหมายงาน">
+                                <group>    
+                                    <field name="assignment" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}"/>
+                                    <field name="field1" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" />
+                                    <field name="check" attrs="{'readonly': [('state', 'not in', ('draft','reported'))]}" invisible="1"/>
+                                </group>                              
+                            </page>
+                            <page string="ประมาณการค่าใช้จ่าย">
+                                <field name="expense_ids">
+                                    <tree string="รายละเอียด" editable="bottom">
+                                        <field name="name"/>
+                                        <field name="allowance"/>
+                                        <field name="accommodation_fee"/>
+                                        <field name="vehicle_fee"/>
+                                        <field name="other_expenses"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right">
+                                <group>
+                                    <field name="amount_total"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="permission_search_view">
+            <field name="name">permission.search</field>
+            <field name="model">offsite.permission</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="place"/>
+                    <filter name="my_permissions" string="การขออนุญาตของฉัน"
+                            domain="[('responsible_id', '=', uid)]"/>
+                    <group string="Group By">
+                        <filter name="by_responsible" string="Responsible"
+                                context="{'group_by': 'responsible_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- calendar view -->
+        <record model="ir.ui.view" id="session_calendar_view">
+            <field name="name">permission.calendar</field>
+            <field name="model">offsite.permission</field>
+            <field name="arch" type="xml">
+                <calendar string="Session Calendar" date_start="date_departure" date_stop="date_arrival" color="responsible_id">
+                    <field name="name"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!-- override the automatically generated list view for permissions -->
+        <record model="ir.ui.view" id="permission_tree_view">
+            <field name="name">permission.tree</field>
+            <field name="model">offsite.permission</field>
+            <field name="arch" type="xml">
+                <tree string="permission Tree">
+                    <field name="name"   />
+                    <field name="responsible_id"/>
+                    <field name="date_departure"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="permission_list_action">
+            <field name="name">บันทึกขออนุญาตไปราชการ</field>
+            <field name="res_model">offsite.permission</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context" eval="{'search_default_my_permissions': 1}"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">เริ่มทำเรื่องขอไปราชการ
+                </p>
+            </field>
+        </record>
+        <menuitem id="main_offsite_menu" name="ขออนุญาตไปราชการ"/>
+
+        <menuitem id="offsite_menu" name="ขออนุญาตไปราชการ"
+                  parent="main_offsite_menu"/>
+
+        <menuitem id="permissions_menu" name="ทำเรื่องขออนุญาตไปราชการ" parent="offsite_menu"
+                  action="permission_list_action"/>
+
+        <record model="ir.ui.view" id="expense_form_view">
+            <field name="name">expense.form</field>
+            <field name="model">offsite.expense</field>
+            <field name="arch" type="xml">
+                <form string="expense Form">
+                    <sheet>
+                        <group>
+                            <group string="General">
+                                <field name="permission_id"/>
+                                <field name="name"/>
+                                <field name="allowance"/>
+                            </group>
+                            <group string="Schedule">
+                                <field name="accommodation_fee"/>
+                                <field name="vehicle_fee"/>
+                                <field name="other_expenses"/>
+                            </group>
+                            <label for="attendee_ids"/>
+                            <field name="attendee_ids"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- expense tree/list view -->
+        <record model="ir.ui.view" id="expense_tree_view">
+            <field name="name">expense.tree</field>
+            <field name="model">offsite.expense</field>
+            <field name="arch" type="xml">
+                <tree string="expense Tree" >
+                    <field name="name"/>
+                    <field name="permission_id"/>
+                    <field name="allowance" invisible="1"/>
+                    <field name="accommodation_fee" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="expense_list_action">
+            <field name="name">expenses</field>
+            <field name="res_model">offsite.expense</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="expense_menu" name="expenses"
+                  parent="offsite_menu"
+                  action="expense_list_action"/>
+
+</odoo>

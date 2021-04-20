@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+permission_manager,permission manager,model_offsite_permission,group_manager,1,1,1,1
+expense_manager,expense manager,model_offsite_expense,group_manager,1,1,1,1
+permission_read_all,permission all,model_offsite_permission,,1,0,0,0
+expense_read_all,expense all,model_offsite_expense,,1,0,0,0

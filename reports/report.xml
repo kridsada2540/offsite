@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="paperformat_frenchcheck" model="report.paperformat">
+        <field name="name">French Bank Check</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">80</field>
+        <field name="page_width">175</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">3</field>
+        <field name="dpi">80</field>
+    </record>
+    
+    <record id="report_permission" model="ir.actions.report">
+        <field name="name">แบบฟอร์มบันทึกขออนุญาตไปราชการ</field>
+        <field name="model">offsite.permission</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">offsite.report_permission_view</field>
+        <field name="report_file">offsite.report_permission</field>
+        <field name="binding_model_id" ref="model_offsite_permission"/>
+        <field name="binding_type">report</field>
+        
+    </record>
+
+       <record id="report_estimate" model="ir.actions.report">
+        <field name="name">แบบฟอร์มประมาณการไปราชการ</field>
+        <field name="model">offsite.permission</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">offsite.report_estimate_view</field>
+        <field name="report_file">offsite.report_permission</field>
+        <field name="binding_model_id" ref="model_offsite_permission"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_permission_view"   >
+        <!-- <xpath expr="//link[last()]" position="after">
+            <link href="https://fonts.googleapis.com/css2?family=Sarabun" rel="stylesheet"/>
+        </xpath> -->
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                
+                    <div class="page">
+                        <center>
+                        <h4>มหาวิทยาลัยราชภัฏบุรีรัมย์</h4>
+                        <h4>บันทึกขออนุญาตไปราชการ</h4>
+                        </center>
+                        <table class='table table-borderless'>
+                            <tr>
+                                <td>
+                                    <span style="font-weight: bold;">1. ส่วนงานราชการ </span>
+                                    <span t-field="doc.fuculty" />
+                                </td>
+                                <td>
+                                    สังกัด <span t-field="doc.department"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  colspan="2">
+                                    วันที่บันทึก <span t-field="doc.date_rec"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   2. ข้าพเจ้า<span t-field="doc.responsible_id"/>
+                                </td>
+                                <td>
+                                    ตำแหน่ง<span t-field="doc.position"/><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  colspan="2">
+                                    พร้อมด้วยคณะรวม <span t-field="doc.number"/> คน (ดังรายชื่อที่ระบุในใบประมาณการรายจ่ายที่แนบ)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                   3. ขอไปราชการในฐานะ <span t-field="doc.departure_as"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  colspan="2">
+                                    ขอไปราชการเพื่อ (วัตถุประสงค์/ลักษณะงาน) <span t-field="doc.name"/>
+                                </td>
+                             </tr>
+                            <tr>
+                                <td  colspan="2">
+                                    ให้แนบเอกสารโครงการ/กิจกรรมที่ระบุรายละเอียด หรือ เหตุผลเพื่อประกอบการพิจารณา (ถ้ามี)
+                                </td>     
+                            </tr>
+                               <tr>
+                                <td colspan="2">
+                                   4. ไปราชการในวันที่ <span t-field="doc.date_departure"/> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  colspan="2">
+                                    ถึงวันที่ <span t-field="doc.date_arrival"/> 
+                                </td>
+                             </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                   5. สถานที่ไปราชการ ชื่อหน่วยงาน <span t-field="doc.place"/>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    อำเภอ <span t-field="doc.amphur"/>  
+                                </td>
+                                <td  >
+                                    จังหวัด <span t-field="doc.province"/>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td colspan="2">
+                                   6. งบประมาณ <span t-field="doc.budget1"/> 
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    โดยใช้งบประมาณ <span t-field="doc.budget2"/> 
+                                </td>
+                                <td  >
+                                    ในวงเงิน <span t-field="doc.amount"/>  
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    งบประมาณ<span t-field="doc.budget_type"/>   
+                                </td>
+                                <td  >
+                                   การเดินทาง	<span t-field="doc.vehicle"/> 
+                                </td>
+                            </tr>
+                            <tr t-foreach="expense_ids" t-as="person">
+                               
+                                <td>test</td>
+                                <td><span  t-field="person.name"/></td>
+                                <td><span  t-field="person.allowance"/></td>
+
+                            </tr>
+                        </table>
+                            
+ 
+                            
+
+
+                            
+                      
+                        
+                    <!-- </div>
+                    <div class="page"> -->
+                        <!-- <h2 t-field="doc.name"/> -->
+                        <!-- <p>From <span t-field="doc.start_date"/> to <span t-field="doc.end_date"/></p> -->
+                  
+                        
+
+                        <span t-field="doc.assignment"/> 
+                        <ul>
+                            <!-- <t t-foreach="doc.attendee_ids" t-as="attendee">
+                                <li><span t-field="attendee.name"/></li>
+                            </t> -->
+                        </ul>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_estimate_view"   >
+        <!-- <xpath expr="//link[last()]" position="after">
+            <link href="https://fonts.googleapis.com/css2?family=Sarabun" rel="stylesheet"/>
+        </xpath> -->
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+
+                    <div class="page">
+                        
+                        
+
+                      
+                        <table class='table table-borderless'>
+                            <tr>
+                                <td colspan="2">
+                                    <span style="font-weight: bold;">ประมาณการรายจ่ายไปราชการ (ให้แนบพร้อมใบขออนุญาตกรณีขอเบิกค่าใช้จ่าย) </span>
+                                  
+                                </td>
+                                
+                            </tr>
+                     
+                            <tr>
+                                <td>
+                                   1. ข้าพเจ้า<span t-field="doc.responsible_id"/>
+                                </td>
+                                <td>
+                                    ตำแหน่ง<span t-field="doc.position"/><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  colspan="2">
+                                    พร้อมด้วยผู้มีรายชื่อในหน้า 2 รวมทั้งสิ้น <span t-field="doc.number"/> คน  มีความประสงค์
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                   ( ) ขออนุญาต  (  ) ได้รับคำสั่ง  ( ) ไปราชการ  เรื่อง <span t-field="doc.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td  >
+                                   ที่ <span t-field="doc.place"/> 
+                                </td>
+                                <td>
+                                    <span t-field="doc.province"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                   ในวันที่ <span t-field="doc.date_departure"/> 
+                                   ถึงวันที่ <span t-field="doc.date_arrival"/> 
+                                </td>
+                            </tr>
+
+                            
+                            <tr>
+                                <td colspan="2">
+                                    การไปราชการครั้งนี้  ขอเบิกค่าใช้จ่ายจากงบประมาณ  <span t-field="doc.budget1"/>
+                                </td>
+                                
+                            </tr>
+                          
+                            <tr>
+                                <td>
+                                    โดยใช้งบประมาณ <span t-field="doc.budget2"/>
+                                </td>
+                                <td>
+                                    งบประมาณ<span t-field="doc.budget_type"/>   
+                                </td>
+                             
+                            </tr>
+                            <tr>
+                                <td  >
+                                   โดยขอเบิกค่าใช้จ่าย  (   )  ตามสิทธิ์  (  )  เหมาจ่าย   เป็นจำนวนเงิน <span t-field="doc.amount"/>  บาท
+                                </td>
+                            </tr>
+                        </table>
+                            
+                          
+                            
+                       
+                            
+                      
+                        
+                    <!-- </div>
+                    <div class="page"> -->
+                        <!-- <h2 t-field="doc.name"/> -->
+                        <!-- <p>From <span t-field="doc.start_date"/> to <span t-field="doc.end_date"/></p> -->
+                  
+                        
+
+                        <span t-field="doc.assignment"/> 
+                        <ul>
+                            <!-- <t t-foreach="doc.attendee_ids" t-as="attendee">
+                                <li><span t-field="attendee.name"/></li>
+                            </t> -->
+                        </ul>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
